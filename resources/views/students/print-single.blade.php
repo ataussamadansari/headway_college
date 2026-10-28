@@ -155,18 +155,71 @@
             font-size: 12px;
             margin: 0 10px;
         }
-        .bottom-sign-lines {
+        .bottom-sign-grid {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
-            gap: 18px;
-            margin-top: 8px;
+            gap: 16px;
+            margin-top: 10px;
+        }
+        .sign-column {
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            padding: 10px 12px;
+            background: #ffffff;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 135px;
+            box-sizing: border-box;
             text-align: center;
         }
-        .bottom-sign-lines .line {
-            border-top: 1px solid #333;
+        .sign-space {
+            min-height: 75px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 8px;
+        }
+        .sign-space img {
+            max-height: 60px;
+            max-width: 90%;
+            object-fit: contain;
+        }
+        .stamp-column {
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
+        }
+        .stamp-box {
+            width: 80px;
+            height: 80px;
+            border: 1.5px dashed #64748b;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: #64748b;
+            font-size: 8px;
+            font-weight: 700;
+            text-transform: uppercase;
+            padding: 4px;
+            box-sizing: border-box;
+            background: #ffffff;
+            line-height: 1.2;
+        }
+        .sign-line {
+            border-top: 1.5px solid #1e293b;
             padding-top: 6px;
-            font-weight: bold;
+            font-weight: 700;
             font-size: 11px;
+            color: #0f172a;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        .sign-sub {
+            font-size: 10px;
+            color: #64748b;
+            margin-top: 2px;
         }
         .print-button button:hover {
             background-color: #1565C0;
@@ -188,7 +241,8 @@
             .section,
             table,
             .documents-section,
-            .bottom-sign-lines {
+            .bottom-sign-grid,
+            .sign-column {
                 page-break-inside: avoid;
             }
         }
@@ -204,7 +258,7 @@
             .documents-section {
                 grid-template-columns: 1fr;
             }
-            .bottom-sign-lines {
+            .bottom-sign-grid {
                 grid-template-columns: 1fr;
             }
             table th, table td {
@@ -413,17 +467,39 @@
             </div>
         </div>
 
-        <!-- Signature Lines -->
+        <!-- Signatures & Official Verification -->
         <div class="section">
-            <div class="bottom-sign-lines">
-                <div>
-                    <div class="line">Student Signature</div>
+            <div class="section-title">Signatures & Official Verification</div>
+            <div class="bottom-sign-grid">
+                <!-- 1. Student Signature -->
+                <div class="sign-column">
+                    <div class="sign-space">
+                        @if ($student->signature_path)
+                            <img src="{{ asset('storage/' . $student->signature_path) }}" alt="Student Signature">
+                        @endif
+                    </div>
+                    <div class="sign-line">Student Signature</div>
+                    <div class="sign-sub">Applicant / Candidate</div>
                 </div>
-                <div>
-                    <div class="line">Parent/Guardian Signature</div>
+
+                <!-- 2. Parent/Guardian Signature -->
+                <div class="sign-column">
+                    <div class="sign-space">
+                        <!-- Space left for parent / guardian physical signature -->
+                    </div>
+                    <div class="sign-line">Parent / Guardian Signature</div>
+                    <div class="sign-sub">Father / Mother / Guardian</div>
                 </div>
-                <div>
-                    <div class="line">Official Stamp</div>
+
+                <!-- 3. Official Stamp -->
+                <div class="sign-column stamp-column">
+                    <div class="sign-space">
+                        <div class="stamp-box">
+                            <span>Official Stamp / Seal</span>
+                        </div>
+                    </div>
+                    <div class="sign-line">Official Stamp</div>
+                    <div class="sign-sub">Authorized Signatory</div>
                 </div>
             </div>
         </div>
