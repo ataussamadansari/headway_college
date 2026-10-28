@@ -130,14 +130,20 @@ class StudentForm
                                 ->directory('students/photos')
                                 ->disk('public')
                                 ->visibility('public')
-                                ->imageEditor(),
+                                ->openable()
+                                ->downloadable()
+                                ->imageEditor()
+                                ->maxSize(5120),
                             FileUpload::make('signature_path')
                                 ->label('Student Signature')
                                 ->image()
                                 ->directory('students/signatures')
                                 ->disk('public')
                                 ->visibility('public')
-                                ->imageEditor(),
+                                ->openable()
+                                ->downloadable()
+                                ->imageEditor()
+                                ->maxSize(5120),
                         ]),
 
                     Step::make('Qualifications')

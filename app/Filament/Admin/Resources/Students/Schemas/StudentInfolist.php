@@ -120,12 +120,18 @@ class StudentInfolist
                         ImageEntry::make('photo_path')
                             ->label('Student Photograph')
                             ->disk('public')
-                            ->height(180)
+                            ->height(160)
+                            ->extraImgAttributes([
+                                'style' => 'object-fit: contain; max-height: 160px; max-width: 100%; border-radius: 8px; border: 1px solid rgba(156, 163, 175, 0.25); padding: 6px; background: rgba(0, 0, 0, 0.2); display: block;',
+                            ])
                             ->defaultImageUrl(fn ($record) => 'https://ui-avatars.com/api/?name=' . urlencode($record?->name ?? 'Student') . '&background=0D47A1&color=fff&size=256'),
                         ImageEntry::make('signature_path')
                             ->label('Student Signature')
                             ->disk('public')
-                            ->height(100),
+                            ->height(100)
+                            ->extraImgAttributes([
+                                'style' => 'object-fit: contain; max-height: 100px; max-width: 100%; border-radius: 8px; border: 1px solid rgba(156, 163, 175, 0.25); padding: 6px; background: #ffffff; display: block;',
+                            ]),
                     ]),
 
                 Section::make('Academic Qualifications & Marks History')

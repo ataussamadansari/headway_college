@@ -297,10 +297,10 @@
                     <div class="field-label">Category</div>
                     <div class="field-value">{{ $student->category ?? 'N/A' }}</div>
                 </div>
-                <div class="field">
+                <!-- <div class="field">
                     <div class="field-label">Caste</div>
                     <div class="field-value">{{ $student->caste ?? 'N/A' }}</div>
-                </div>
+                </div> -->
             </div>
             <div class="row full">
                 <div class="field">
