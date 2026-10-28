@@ -25,7 +25,7 @@ class StudentsTable
                     ->label('Photo')
                     ->disk('public')
                     ->circular()
-                    ->defaultImageUrl(url('/images/default-avatar.png')),
+                    ->defaultImageUrl(fn ($record) => 'https://ui-avatars.com/api/?name=' . urlencode($record?->name ?? 'Student') . '&background=0D47A1&color=fff&rounded=true'),
                 TextColumn::make('college_register_no')
                     ->label('Register No')
                     ->searchable()
@@ -91,8 +91,9 @@ class StudentsTable
                     ]),
             ])
             ->recordActions([
-                EditAction::make(),
                 ViewAction::make(),
+                EditAction::make(),
+                \Filament\Actions\DeleteAction::make(),
                 Action::make('print')
                     ->label('Print Slip')
                     ->icon('heroicon-o-printer')

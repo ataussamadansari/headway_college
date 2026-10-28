@@ -157,4 +157,79 @@ class FilamentAdminTest extends TestCase
         $response->assertStatus(200);
         $response->assertSee('Headway College');
     }
+
+    public function test_admin_can_view_session_infolist(): void
+    {
+        $admin = User::factory()->create();
+        $session = Session::create([
+            'name' => '2026-27',
+            'start_date' => '2026-07-09',
+            'end_date' => '2027-06-30',
+            'is_active' => true,
+        ]);
+
+        $response = $this->actingAs($admin)->get("/admin/sessions/{$session->id}");
+
+        $response->assertStatus(200);
+        $response->assertSee('Back to Sessions');
+        $response->assertSee('Academic Session Overview');
+    }
+
+    public function test_admin_can_view_course_infolist(): void
+    {
+        $admin = User::factory()->create();
+        $course = Course::create([
+            'code' => 'BCA101',
+            'name' => 'Bachelor of Computer Applications',
+            'total_seats' => 60,
+            'is_active' => true,
+        ]);
+
+        $response = $this->actingAs($admin)->get("/admin/courses/{$course->id}");
+
+        $response->assertStatus(200);
+        $response->assertSee('Back to Courses');
+        $response->assertSee('Course Overview');
+    }
+
+    public function test_admin_can_view_student_infolist(): void
+    {
+        $admin = User::factory()->create();
+        $course = Course::create([
+            'code' => 'BBA101',
+            'name' => 'Bachelor of Business Administration',
+            'total_seats' => 60,
+            'is_active' => true,
+        ]);
+        $session = Session::create([
+            'name' => '2026-2027',
+            'start_date' => '2026-07-01',
+            'end_date' => '2027-06-30',
+            'is_active' => true,
+        ]);
+        $student = Student::create([
+            'college_register_no' => 'REG-101',
+            'control_no' => 'CTRL-101',
+            'registration_date' => '2026-10-29',
+            'course_id' => $course->id,
+            'session_id' => $session->id,
+            'name' => 'Alex Turner',
+            'father_name' => 'David Turner',
+            'mother_name' => 'Sarah Turner',
+            'gender' => 'male',
+            'dob' => '2004-09-12',
+            'mobile' => '9988776655',
+            'address' => '789 Park Street',
+            'pincode' => '226001',
+            'domicile_up' => true,
+            'is_handicap' => false,
+        ]);
+
+        $response = $this->actingAs($admin)->get("/admin/students/{$student->id}");
+
+        $response->assertStatus(200);
+        $response->assertSee('Back to Students');
+        $response->assertSee('Admission & Identification');
+        $response->assertSee('Print Slip');
+    }
 }

@@ -55,8 +55,9 @@ class CoursesTable
                     ->label('Active Status'),
             ])
             ->recordActions([
-                EditAction::make(),
                 ViewAction::make(),
+                EditAction::make(),
+                \Filament\Actions\DeleteAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
