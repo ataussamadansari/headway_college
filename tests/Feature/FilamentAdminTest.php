@@ -106,4 +106,55 @@ class FilamentAdminTest extends TestCase
 
         $response->assertStatus(200);
     }
+
+    public function test_admin_can_access_student_print_slip(): void
+    {
+        $admin = User::factory()->create();
+        $course = Course::create([
+            'code' => 'CS102',
+            'name' => 'Data Science',
+            'total_seats' => 30,
+            'is_active' => true,
+        ]);
+        $session = Session::create([
+            'name' => '2026-2027',
+            'start_date' => '2026-07-01',
+            'end_date' => '2027-06-30',
+            'is_active' => true,
+        ]);
+
+        $student = Student::create([
+            'college_register_no' => 'REG-002',
+            'control_no' => 'CTRL-002',
+            'registration_date' => '2026-10-29',
+            'course_id' => $course->id,
+            'session_id' => $session->id,
+            'name' => 'Jane Smith',
+            'father_name' => 'John Smith',
+            'mother_name' => 'Mary Smith',
+            'gender' => 'female',
+            'dob' => '2005-03-21',
+            'mobile' => '9876543211',
+            'address' => '456 University Road',
+            'pincode' => '654321',
+            'domicile_up' => true,
+            'is_handicap' => false,
+        ]);
+
+        $response = $this->actingAs($admin)->get("/students/{$student->id}/print");
+
+        $response->assertStatus(200);
+        $response->assertSee('Headway College');
+        $response->assertSee('Jane Smith');
+    }
+
+    public function test_admin_can_access_student_roster_print(): void
+    {
+        $admin = User::factory()->create();
+
+        $response = $this->actingAs($admin)->get('/students/report/print');
+
+        $response->assertStatus(200);
+        $response->assertSee('Headway College');
+    }
 }
