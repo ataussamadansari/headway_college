@@ -1,3 +1,7 @@
+---
+last_mapped_commit: e27cd44232a119c5e4094f01049ef8310e2ba287
+last_mapped_at: 2026-10-29
+---
 # External Integrations
 
 **Analysis Date:** 2026-10-28
