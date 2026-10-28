@@ -2,6 +2,8 @@
 
 namespace App\Filament\Admin\Resources\Courses\Tables;
 
+use App\Filament\Admin\Resources\Courses\Pages\EditCourse;
+use App\Models\Course;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -16,6 +18,7 @@ class CoursesTable
     public static function configure(Table $table): Table
     {
         return $table
+            ->recordUrl(fn (Course $record): string => EditCourse::getUrl(['record' => $record]))
             ->columns([
                 TextColumn::make('code')
                     ->label('Course Code')
@@ -52,8 +55,8 @@ class CoursesTable
                     ->label('Active Status'),
             ])
             ->recordActions([
-                ViewAction::make(),
                 EditAction::make(),
+                ViewAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

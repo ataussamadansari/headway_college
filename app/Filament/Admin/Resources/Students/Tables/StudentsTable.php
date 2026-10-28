@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources\Students\Tables;
 
+use App\Filament\Admin\Resources\Students\Pages\EditStudent;
 use App\Models\Student;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
@@ -18,6 +19,7 @@ class StudentsTable
     public static function configure(Table $table): Table
     {
         return $table
+            ->recordUrl(fn (Student $record): string => EditStudent::getUrl(['record' => $record]))
             ->columns([
                 ImageColumn::make('photo_path')
                     ->label('Photo')
@@ -89,8 +91,8 @@ class StudentsTable
                     ]),
             ])
             ->recordActions([
-                ViewAction::make(),
                 EditAction::make(),
+                ViewAction::make(),
                 Action::make('print')
                     ->label('Print Slip')
                     ->icon('heroicon-o-printer')

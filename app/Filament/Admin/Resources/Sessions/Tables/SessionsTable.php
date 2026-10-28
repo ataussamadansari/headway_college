@@ -2,6 +2,8 @@
 
 namespace App\Filament\Admin\Resources\Sessions\Tables;
 
+use App\Filament\Admin\Resources\Sessions\Pages\EditSession;
+use App\Models\Session;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -16,6 +18,7 @@ class SessionsTable
     public static function configure(Table $table): Table
     {
         return $table
+            ->recordUrl(fn (Session $record): string => EditSession::getUrl(['record' => $record]))
             ->columns([
                 TextColumn::make('name')
                     ->label('Academic Session')
@@ -49,8 +52,8 @@ class SessionsTable
                     ->label('Active Status'),
             ])
             ->recordActions([
-                ViewAction::make(),
                 EditAction::make(),
+                ViewAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
