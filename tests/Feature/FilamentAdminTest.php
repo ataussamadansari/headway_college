@@ -232,4 +232,95 @@ class FilamentAdminTest extends TestCase
         $response->assertSee('Admission & Identification');
         $response->assertSee('Print Slip');
     }
+
+    public function test_old_files_are_deleted_when_new_files_are_uploaded(): void
+    {
+        \Illuminate\Support\Facades\Storage::fake('public');
+
+        \Illuminate\Support\Facades\Storage::disk('public')->put('students/photos/old_photo.jpg', 'fake-photo-content');
+        \Illuminate\Support\Facades\Storage::disk('public')->put('students/signatures/old_sig.png', 'fake-signature-content');
+
+        $course = Course::create(['code' => 'TEST1', 'name' => 'Course 1', 'total_seats' => 10, 'is_active' => true]);
+        $session = Session::create(['name' => '2026-27', 'start_date' => '2026-01-01', 'end_date' => '2026-12-31', 'is_active' => true]);
+
+        $student = Student::create([
+            'college_register_no' => 'REG-CLEAN-1',
+            'control_no' => 'CTRL-CLEAN-1',
+            'registration_date' => '2026-10-29',
+            'course_id' => $course->id,
+            'session_id' => $session->id,
+            'name' => 'Cleanup Test',
+            'father_name' => 'Father',
+            'mother_name' => 'Mother',
+            'gender' => 'male',
+            'dob' => '2000-01-01',
+            'mobile' => '9999999999',
+            'address' => 'Address',
+            'pincode' => '123456',
+            'domicile_up' => true,
+            'is_handicap' => false,
+            'photo_path' => 'students/photos/old_photo.jpg',
+            'signature_path' => 'students/signatures/old_sig.png',
+        ]);
+
+        \Illuminate\Support\Facades\Storage::disk('public')->assertExists('students/photos/old_photo.jpg');
+        \Illuminate\Support\Facades\Storage::disk('public')->assertExists('students/signatures/old_sig.png');
+
+        // Now simulate uploading new files
+        \Illuminate\Support\Facades\Storage::disk('public')->put('students/photos/new_photo.jpg', 'new-photo-content');
+        \Illuminate\Support\Facades\Storage::disk('public')->put('students/signatures/new_sig.png', 'new-signature-content');
+
+        $student->update([
+            'photo_path' => 'students/photos/new_photo.jpg',
+            'signature_path' => 'students/signatures/new_sig.png',
+        ]);
+
+        // Old files should be deleted
+        \Illuminate\Support\Facades\Storage::disk('public')->assertMissing('students/photos/old_photo.jpg');
+        \Illuminate\Support\Facades\Storage::disk('public')->assertMissing('students/signatures/old_sig.png');
+
+        // New files should remain
+        \Illuminate\Support\Facades\Storage::disk('public')->assertExists('students/photos/new_photo.jpg');
+        \Illuminate\Support\Facades\Storage::disk('public')->assertExists('students/signatures/new_sig.png');
+    }
+
+    public function test_files_are_deleted_when_student_is_deleted(): void
+    {
+        \Illuminate\Support\Facades\Storage::fake('public');
+
+        \Illuminate\Support\Facades\Storage::disk('public')->put('students/photos/temp_photo.jpg', 'photo');
+        \Illuminate\Support\Facades\Storage::disk('public')->put('students/signatures/temp_sig.png', 'sig');
+
+        $course = Course::create(['code' => 'TEST2', 'name' => 'Course 2', 'total_seats' => 10, 'is_active' => true]);
+        $session = Session::create(['name' => '2026-27', 'start_date' => '2026-01-01', 'end_date' => '2026-12-31', 'is_active' => true]);
+
+        $student = Student::create([
+            'college_register_no' => 'REG-CLEAN-2',
+            'control_no' => 'CTRL-CLEAN-2',
+            'registration_date' => '2026-10-29',
+            'course_id' => $course->id,
+            'session_id' => $session->id,
+            'name' => 'Delete Test',
+            'father_name' => 'Father',
+            'mother_name' => 'Mother',
+            'gender' => 'male',
+            'dob' => '2000-01-01',
+            'mobile' => '9999999998',
+            'address' => 'Address',
+            'pincode' => '123456',
+            'domicile_up' => true,
+            'is_handicap' => false,
+            'photo_path' => 'students/photos/temp_photo.jpg',
+            'signature_path' => 'students/signatures/temp_sig.png',
+        ]);
+
+        \Illuminate\Support\Facades\Storage::disk('public')->assertExists('students/photos/temp_photo.jpg');
+        \Illuminate\Support\Facades\Storage::disk('public')->assertExists('students/signatures/temp_sig.png');
+
+        $student->delete();
+
+        // Files must be deleted when the student record is deleted
+        \Illuminate\Support\Facades\Storage::disk('public')->assertMissing('students/photos/temp_photo.jpg');
+        \Illuminate\Support\Facades\Storage::disk('public')->assertMissing('students/signatures/temp_sig.png');
+    }
 }

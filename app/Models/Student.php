@@ -39,6 +39,44 @@ class Student extends Model
     ];
 
     /**
+     * The "booted" method of the model.
+     * Automatically cleans up stored photos and signatures when replaced or deleted.
+     */
+    protected static function booted(): void
+    {
+        // When updating, remove old photo/signature if replaced with a new file or cleared
+        static::updating(function (Student $student) {
+            if ($student->isDirty('photo_path')) {
+                $oldPhoto = $student->getOriginal('photo_path');
+                if (!empty($oldPhoto) && \Illuminate\Support\Facades\Storage::disk('public')->exists($oldPhoto)) {
+                    \Illuminate\Support\Facades\Storage::disk('public')->delete($oldPhoto);
+                }
+            }
+
+            if ($student->isDirty('signature_path')) {
+                $oldSignature = $student->getOriginal('signature_path');
+                if (!empty($oldSignature) && \Illuminate\Support\Facades\Storage::disk('public')->exists($oldSignature)) {
+                    \Illuminate\Support\Facades\Storage::disk('public')->delete($oldSignature);
+                }
+            }
+        });
+
+        // When deleting, remove associated photo and signature files from disk
+        static::deleting(function (Student $student) {
+            if (!empty($student->photo_path) && \Illuminate\Support\Facades\Storage::disk('public')->exists($student->photo_path)) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($student->photo_path);
+            }
+
+            if (!empty($student->signature_path) && \Illuminate\Support\Facades\Storage::disk('public')->exists($student->signature_path)) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($student->signature_path);
+            }
+
+            // Also clean up related qualifications
+            $student->educationalQualifications()->delete();
+        });
+    }
+
+    /**
      * Get the course that the student is enrolled in
      */
     public function course()
